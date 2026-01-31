@@ -1,0 +1,60 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BusinessGrid from "../components/BusinessGrid";
+import businesses from "../data/businesses.json";
+---
+
+<Layout title="Mercadotez | La Vitrina Digital de Teziutlán">
+	<main
+		class="min-h-screen flex flex-col items-center justify-start p-8 relative overflow-hidden transition-colors duration-300"
+	>
+		<!-- Background Glow (Adaptive) -->
+		<div
+			class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/20 blur-[120px] rounded-full pointer-events-none mix-blend-multiply dark:mix-blend-normal"
+		>
+		</div>
+
+		<!-- Header -->
+		<div
+			class="z-10 text-center w-full max-w-4xl animate-fade-in-up mt-12 mb-8"
+		>
+			<h1
+				class="text-6xl font-black tracking-tighter mb-4 bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400 text-transparent bg-clip-text"
+			>
+				MERCADOTEZ
+			</h1>
+			<p
+				class="text-xl text-neutral-600 dark:text-neutral-400 font-light"
+			>
+				La Perla de la Sierra, digitalizada.
+			</p>
+		</div>
+
+		<!-- Interactive App -->
+		<div class="z-10 w-full mb-20">
+			<BusinessGrid data={businesses} client:load />
+		</div>
+
+		<!-- Footer -->
+		<footer
+			class="absolute bottom-4 text-neutral-500 dark:text-neutral-600 text-sm font-mono"
+		>
+			Powered by Chipitech &bull; Astra AI
+		</footer>
+	</main>
+</Layout>
+
+<style>
+	.animate-fade-in-up {
+		animation: fadeInUp 0.8s ease-out forwards;
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	@keyframes fadeInUp {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
