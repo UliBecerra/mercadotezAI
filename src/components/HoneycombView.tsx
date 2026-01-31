@@ -108,10 +108,9 @@ export default function HoneycombView({ businesses }: Props) {
     return (
         <div
             ref={containerRef}
-            className="honeycomb-grid-container relative w-full overflow-hidden cursor-grab active:cursor-grabbing"
+            className="honeycomb-grid-container relative w-full overflow-hidden cursor-grab active:cursor-grabbing bg-neutral-100 dark:bg-slate-900"
             style={{
                 height: '700px',
-                background: 'radial-gradient(circle at center, #0f172a 0%, #000 100%)',
                 perspective: '1000px' // Crucial for 3D effect
             }}
             onMouseDown={handleMouseDown}
@@ -123,6 +122,15 @@ export default function HoneycombView({ businesses }: Props) {
             onTouchEnd={handleMouseUp}
         >
             <style>{`
+                .honeycomb-grid-container {
+                    /* Light Mode Gradient */
+                    background: radial-gradient(circle at center, #f1f5f9 0%, #cbd5e1 100%);
+                }
+                :global(.dark) .honeycomb-grid-container {
+                    /* Dark Mode Gradient */
+                    background: radial-gradient(circle at center, #0f172a 0%, #000 100%);
+                }
+
                 .honeycomb-item {
                     position: absolute;
                     width: ${HEX_WIDTH}px;
@@ -134,20 +142,16 @@ export default function HoneycombView({ businesses }: Props) {
                     justify-content: center;
                     user-select: none;
                     will-change: transform; 
-                    /* No default transition during drag for performance, enable it for hover? */
-                    /* transition: transform 0.1s; */
                 }
                 .honeycomb-content {
                     position: absolute;
                     inset: 4px;
-                    background: rgba(30,30,30,0.95);
                     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    border: 2px solid rgba(255,255,255,0.1);
-                    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                    backdrop-filter: blur(4px);
                 }
                 .honeycomb-bg {
                     position: absolute;
@@ -167,7 +171,6 @@ export default function HoneycombView({ businesses }: Props) {
                     padding: 10px;
                     text-align: center;
                     z-index: 10;
-                    background: radial-gradient(circle, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 100%);
                 }
                 .status-dot {
                     width: 8px;
@@ -242,17 +245,19 @@ export default function HoneycombView({ businesses }: Props) {
                         }}
                         onDragStart={(e) => e.preventDefault()}
                     >
-                        <div className="honeycomb-content">
+                        <div className={`honeycomb-content shadow-lg border-2 
+                            bg-white/90 border-white/50 
+                            dark:bg-neutral-900/95 dark:border-white/10`}>
                             <img
                                 src={business.image !== '/images/placeholder.jpg' ? business.image : `https://ui-avatars.com/api/?name=${business.name}&background=random`}
                                 alt={business.name}
                                 className="honeycomb-bg"
                             />
-                            <div className="honeycomb-info">
-                                <h3 className="text-white font-bold text-xs md:text-sm leading-tight drop-shadow-md text-shadow" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                            <div className="honeycomb-info bg-white/60 dark:bg-black/40">
+                                <h3 className="font-bold text-xs md:text-sm leading-tight drop-shadow-sm text-neutral-900 dark:text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.1) dark:0 2px 4px rgba(0,0,0,0.8)' }}>
                                     {business.name}
                                 </h3>
-                                <span className="text-[9px] text-blue-200 uppercase tracking-widest mt-1 opacity-90">{business.category}</span>
+                                <span className="text-[9px] text-blue-600 dark:text-blue-200 uppercase tracking-widest mt-1 opacity-90 font-bold">{business.category}</span>
                                 <div className="status-dot" style={{ backgroundColor: statusColor }}></div>
                             </div>
                         </div>
