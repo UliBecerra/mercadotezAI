@@ -5,6 +5,8 @@ import businesses from '../../data/businesses.json';
 // In a real deployed app, ensure GEMINI_API_KEY is set in Netlify Environment Variables
 const API_KEY = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   if (!API_KEY) {
     return new Response(JSON.stringify({ error: 'Config Error: API Key missing' }), { status: 500 });
@@ -36,16 +38,16 @@ export const POST: APIRoute = async ({ request }) => {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const chat = model.startChat({
-        history: [
-            {
-                role: "user",
-                parts: [{ text: systemPrompt }],
-            },
-            {
-                role: "model",
-                parts: [{ text: "Entendido. Soy Astra, lista para conectar a Teziutlán." }],
-            },
-        ],
+      history: [
+        {
+          role: "user",
+          parts: [{ text: systemPrompt }],
+        },
+        {
+          role: "model",
+          parts: [{ text: "Entendido. Soy Astra, lista para conectar a Teziutlán." }],
+        },
+      ],
     });
 
     const result = await chat.sendMessage(userMessage);

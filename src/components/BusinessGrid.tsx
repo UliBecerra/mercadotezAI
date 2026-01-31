@@ -16,14 +16,18 @@ interface Props {
 export default function BusinessGrid({ data }: Props) {
     const [search, setSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Todas');
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [viewMode, setViewMode] = useState<'grid' | 'list' | 'honeycomb'>('grid');
 
     const categories = ['Todas', 'Gastronomía', 'Servicios', 'Artesanía', 'Transporte'];
 
     const filteredBusinesses = useMemo(() => {
-        return data.filter((business) => {
-            const matchesSearch = business.name.toLowerCase().includes(search.toLowerCase()) ||
-                business.description.toLowerCase().includes(search.toLowerCase());
+        const safeData = data || [];
+        return safeData.filter((business) => {
+            const name = business.name || '';
+            const description = business.description || '';
+
+            const matchesSearch = name.toLowerCase().includes(search.toLowerCase()) ||
+                description.toLowerCase().includes(search.toLowerCase());
             const matchesCategory = selectedCategory === 'Todas' || business.category === selectedCategory;
 
             return matchesSearch && matchesCategory;
@@ -48,7 +52,7 @@ export default function BusinessGrid({ data }: Props) {
     return (
         <div className="w-full max-w-4xl mx-auto">
             {/* Controls Container */}
-            <div className="mb-12 space-y-8 animate-fade-in-up">
+            <div className="mb-12 space-y-8">
 
                 {/* Search Bar */}
                 <div className="relative w-full max-w-lg mx-auto group">
@@ -87,7 +91,7 @@ export default function BusinessGrid({ data }: Props) {
                             title="Vista Cuadrícula"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                             </svg>
                         </button>
                         <button
@@ -99,36 +103,73 @@ export default function BusinessGrid({ data }: Props) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
+                        <button
+                            onClick={() => setViewMode('honeycomb')}
+                            className={`p-2 rounded-md transition-all ${viewMode === 'honeycomb' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+                            title="Vista Panal"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L4 6.5V17.5L12 22L20 17.5V6.5L12 2Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* Grid/List Results */}
-            <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                {filteredBusinesses.map((business) => (
-                    <a
-                        href={`/business/${business.id}`}
-                        key={business.id}
-                        className={`block group relative bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 ${viewMode === 'list' ? 'flex flex-col md:flex-row' : ''}`}
-                    >
-                        <div className={`overflow-hidden ${viewMode === 'list' ? 'w-full md:w-64 h-48 md:h-auto' : 'h-48'}`}>
-                            <img src={business.image !== '/images/placeholder.jpg' ? business.image : `https://ui-avatars.com/api/?name=${business.name}&background=random`} alt={business.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        </div>
-                        <div className="p-6 flex-1 flex flex-col justify-center">
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="text-xs font-bold text-blue-500 uppercase tracking-wider">{business.category}</span>
-                                {(business as any).rating && renderStars((business as any).rating, (business as any).reviews)}
+            {/* Grid/List/Honeycomb Results */}
+            <div className={`
+                ${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : ''}
+                ${viewMode === 'list' ? 'flex flex-col gap-4' : ''}
+                ${viewMode === 'honeycomb' ? 'flex flex-wrap justify-center gap-4' : ''}
+            `}>
+                {filteredBusinesses.map((business, index) => (
+                    viewMode === 'honeycomb' ? (
+                        // Honeycomb Card
+                        <a
+                            href={`/business/${business.id}`}
+                            key={business.id}
+                            className="relative w-64 h-72 group transition-all duration-300 transform hover:scale-105 hover:z-10"
+                            style={{
+                                marginTop: index % 2 === 1 ? '40px' : '0' // Simple stagger effect for row-based wrap
+                            }}
+                        >
+                            <div className="absolute inset-0 bg-neutral-900" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}>
+                                <img src={business.image !== '/images/placeholder.jpg' ? business.image : `https://ui-avatars.com/api/?name=${business.name || 'Negocio'}&background=random`} alt={business.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                                    <h3 className="text-white font-bold text-lg mb-1 drop-shadow-md">{business.name}</h3>
+                                    <span className="text-xs text-blue-300 font-bold uppercase tracking-wider bg-blue-900/50 px-2 py-0.5 rounded-full backdrop-blur-sm">{business.category}</span>
+                                </div>
                             </div>
-
-                            <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">{business.name}</h3>
-                            <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-4 line-clamp-2">{business.description}</p>
-
-                            <div className="inline-flex items-center text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-blue-500 transition-colors mt-auto">
-                                Ver detalles
-                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>
+                    ) : (
+                        // Standard Grid/List Card
+                        <a
+                            href={`/business/${business.id}`}
+                            key={business.id}
+                            className={`block group relative bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 
+                                ${viewMode === 'list'
+                                    ? 'flex flex-row h-32 md:h-48'
+                                    : 'flex flex-col'}`}
+                        >
+                            <div className={`overflow-hidden shrink-0 ${viewMode === 'list' ? 'w-32 md:w-64 h-full' : 'w-full h-48'}`}>
+                                <img src={business.image !== '/images/placeholder.jpg' ? business.image : `https://ui-avatars.com/api/?name=${business.name || 'Negocio'}&background=random`} alt={business.name || 'Negocio'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             </div>
-                        </div>
-                    </a>
+                            <div className="p-4 md:p-6 flex-1 flex flex-col justify-center min-w-0">
+                                <div className="flex justify-between items-start mb-1 md:mb-2">
+                                    <span className="text-[10px] md:text-xs font-bold text-blue-500 uppercase tracking-wider truncate mr-2">{business.category}</span>
+                                    {(business as any).rating && <div className="hidden md:block">{renderStars((business as any).rating, (business as any).reviews)}</div>}
+                                </div>
+
+                                <h3 className="text-base md:text-xl font-bold text-neutral-900 dark:text-white mb-1 md:mb-2 truncate">{business.name}</h3>
+                                <p className={`text-xs md:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-2 md:mb-4 ${viewMode === 'list' ? 'line-clamp-2' : 'line-clamp-2'}`}>{business.description}</p>
+
+                                <div className="inline-flex items-center text-xs md:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-blue-500 transition-colors mt-auto">
+                                    Ver detalles
+                                    <svg className="w-3 h-3 md:w-4 md:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                </div>
+                            </div>
+                        </a>
+                    )
                 ))}
             </div>
 

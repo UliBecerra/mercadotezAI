@@ -3,15 +3,24 @@ import { defineConfig } from 'astro/config';
 import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import netlify from '@astrojs/netlify';
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: netlify(),
   vite: {
     plugins: [
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
+        devOptions: {
+          enabled: false
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          cleanupOutdatedCaches: true
+        },
         manifest: {
           name: 'Mercadotez - Directorio Local',
           short_name: 'Mercadotez',
