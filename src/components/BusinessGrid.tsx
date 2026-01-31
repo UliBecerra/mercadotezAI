@@ -1,13 +1,6 @@
 import { useState, useMemo } from 'react';
-
-interface Business {
-    id: string;
-    name: string;
-    category: string;
-    description: string;
-    phone: string;
-    image: string;
-}
+import type { Business } from '../types';
+import HoneycombView from './HoneycombView';
 
 interface Props {
     data: Business[];
@@ -50,10 +43,9 @@ export default function BusinessGrid({ data }: Props) {
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto px-4">
             {/* Controls Container */}
             <div className="mb-12 space-y-8">
-
                 {/* Search Bar */}
                 <div className="relative w-full max-w-lg mx-auto group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
@@ -61,7 +53,7 @@ export default function BusinessGrid({ data }: Props) {
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="¿Qué buscas hoy? (ej. Tlayoyos, Transporte...)"
+                        placeholder=" ej. Tlayoyos, Transporte..."
                         className="relative w-full bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg px-6 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-xl placeholder-neutral-400 dark:placeholder-neutral-600 font-medium transition-colors"
                     />
                 </div>
@@ -85,64 +77,22 @@ export default function BusinessGrid({ data }: Props) {
 
                     {/* View Toggle */}
                     <div className="flex bg-white/50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-lg p-1">
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
-                            title="Vista Cuadrícula"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={() => setViewMode('list')}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
-                            title="Vista Lista"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                        <button
-                            onClick={() => setViewMode('honeycomb')}
-                            className={`p-2 rounded-md transition-all ${viewMode === 'honeycomb' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
-                            title="Vista Panal"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2L4 6.5V17.5L12 22L20 17.5V6.5L12 2Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </button>
+                        <button onClick={() => setViewMode('grid')} className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500'}`}><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></button>
+                        <button onClick={() => setViewMode('list')} className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500'}`}><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></button>
+                        <button onClick={() => setViewMode('honeycomb')} className={`p-2 rounded-md ${viewMode === 'honeycomb' ? 'bg-white dark:bg-neutral-800 shadow-sm text-blue-500' : 'text-neutral-500'}`}><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 6.5V17.5L12 22L20 17.5V6.5L12 2Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
                     </div>
                 </div>
             </div>
 
-            {/* Grid/List/Honeycomb Results */}
-            <div className={`
-                ${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : ''}
-                ${viewMode === 'list' ? 'flex flex-col gap-4' : ''}
-                ${viewMode === 'honeycomb' ? 'flex flex-wrap justify-center gap-4' : ''}
-            `}>
-                {filteredBusinesses.map((business, index) => (
-                    viewMode === 'honeycomb' ? (
-                        // Honeycomb Card
-                        <a
-                            href={`/business/${business.id}`}
-                            key={business.id}
-                            className="relative w-64 h-72 group transition-all duration-300 transform hover:scale-105 hover:z-10"
-                            style={{
-                                marginTop: index % 2 === 1 ? '40px' : '0' // Simple stagger effect for row-based wrap
-                            }}
-                        >
-                            <div className="absolute inset-0 bg-neutral-900" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}>
-                                <img src={business.image !== '/images/placeholder.jpg' ? business.image : `https://ui-avatars.com/api/?name=${business.name || 'Negocio'}&background=random`} alt={business.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                                    <h3 className="text-white font-bold text-lg mb-1 drop-shadow-md">{business.name}</h3>
-                                    <span className="text-xs text-blue-300 font-bold uppercase tracking-wider bg-blue-900/50 px-2 py-0.5 rounded-full backdrop-blur-sm">{business.category}</span>
-                                </div>
-                            </div>
-                        </a>
-                    ) : (
-                        // Standard Grid/List Card
+            {/* Results */}
+            {viewMode === 'honeycomb' ? (
+                <HoneycombView businesses={filteredBusinesses} />
+            ) : (
+                <div className={`
+                    ${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : ''}
+                    ${viewMode === 'list' ? 'flex flex-col gap-4' : ''}
+                `}>
+                    {filteredBusinesses.map((business) => (
                         <a
                             href={`/business/${business.id}`}
                             key={business.id}
@@ -159,23 +109,21 @@ export default function BusinessGrid({ data }: Props) {
                                     <span className="text-[10px] md:text-xs font-bold text-blue-500 uppercase tracking-wider truncate mr-2">{business.category}</span>
                                     {(business as any).rating && <div className="hidden md:block">{renderStars((business as any).rating, (business as any).reviews)}</div>}
                                 </div>
-
                                 <h3 className="text-base md:text-xl font-bold text-neutral-900 dark:text-white mb-1 md:mb-2 truncate">{business.name}</h3>
-                                <p className={`text-xs md:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-2 md:mb-4 ${viewMode === 'list' ? 'line-clamp-2' : 'line-clamp-2'}`}>{business.description}</p>
-
+                                <p className={`text-xs md:text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-2 md:mb-4 line-clamp-2`}>{business.description}</p>
                                 <div className="inline-flex items-center text-xs md:text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-blue-500 transition-colors mt-auto">
                                     Ver detalles
                                     <svg className="w-3 h-3 md:w-4 md:h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                                 </div>
                             </div>
                         </a>
-                    )
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {filteredBusinesses.length === 0 && (
                 <div className="text-center text-neutral-500 mt-12">
-                    No encontramos resultados para "{search}". <br /> ¡Prueba buscar otra cosa!
+                    No encontramos resultados para "{search}".
                 </div>
             )}
         </div>

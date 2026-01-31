@@ -9,7 +9,7 @@ interface Message {
 export default function ChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
-        { id: '1', text: 'Hola, soy Astra. ¿En qué puedo ayudarte a encontrar hoy?', sender: 'bot' }
+        { id: '1', text: 'Hola, soy Amroth. ¿En qué puedo ayudarte a encontrar hoy?', sender: 'bot' }
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -78,7 +78,7 @@ export default function ChatWidget() {
                                 <span className="text-sm font-bold">AI</span>
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm">Astra AI</h3>
+                                <h3 className="font-bold text-sm">Amroth AI</h3>
                                 <p className="text-xs text-blue-200 flex items-center">
                                     <span className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
                                     En línea
@@ -95,8 +95,8 @@ export default function ChatWidget() {
                         {messages.map((msg) => (
                             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${msg.sender === 'user'
-                                        ? 'bg-blue-600 text-white rounded-br-none'
-                                        : 'bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-bl-none shadow-sm'
+                                    ? 'bg-blue-600 text-white rounded-br-none'
+                                    : 'bg-white dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700 rounded-bl-none shadow-sm'
                                     }`}>
                                     {msg.text}
                                 </div>

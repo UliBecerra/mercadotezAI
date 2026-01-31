@@ -20,7 +20,7 @@ export const POST: APIRoute = async ({ request }) => {
     const contextData = businesses.map(b => `- ${b.name} (${b.category}): ${b.description}. Ubicación: ${b.location || 'Centro'}. Rating: ${b.rating}⭐`).join('\n');
 
     const systemPrompt = `
-      Actúa como Astra, la IA oficial del directorio "Mercadotez" en Teziutlán.
+      Actúa como Amroth, la IA oficial del directorio "Mercadotez" en Teziutlán.
       Tu objetivo es ayudar a la gente a encontrar negocios locales.
       
       CONTEXTO DE NEGOCIOS:
@@ -32,6 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
       3. Si recomiendas un negocio, menciona su calificación si es alta.
       4. Si no encuentras nada, sugiere buscar en la categoría más cercana.
       5. Tus respuestas deben ser en texto plano o Markdown simple.
+      6. SIEMPRE preséntate como Amroth.
     `;
 
     const genAI = new GoogleGenerativeAI(API_KEY);
@@ -45,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
         },
         {
           role: "model",
-          parts: [{ text: "Entendido. Soy Astra, lista para conectar a Teziutlán." }],
+          parts: [{ text: "Entendido. Soy Amroth, listo para conectar a Teziutlán." }],
         },
       ],
     });
